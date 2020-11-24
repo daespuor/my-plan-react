@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
     },
   },
+  button: {
+    margin: theme.spacing(1),
+  },
 }));
 
 const Projections = () => {
@@ -32,19 +35,20 @@ const Projections = () => {
   return (
     <Grid item xs={12} className={classes.list}>
       <Typography variant={isSmallScreen ? "h2" : "h3"}>Projections</Typography>
-      <List className={classes.list}>
-        <Projection name="January 2021" />
-        <Projection name="Dicember 2020" />
-        <Projection name="November 2020" />
-      </List>
       <Button
         size="large"
         variant="contained"
         color="primary"
         onClick={toggleDialog}
+        className={classes.button}
       >
         Add Projection
       </Button>
+      <List className={classes.list}>
+        <Projection name="January 2021" />
+        <Projection name="Dicember 2020" />
+        <Projection name="November 2020" />
+      </List>
       <AddProjectionDialog open={open} handleClose={toggleDialog} />
     </Grid>
   );

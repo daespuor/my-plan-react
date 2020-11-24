@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
     },
   },
+  button: {
+    margin: theme.spacing(1),
+  },
 }));
 
 const Expenses = () => {
@@ -32,6 +35,15 @@ const Expenses = () => {
   return (
     <Grid item xs={12} className={classes.list}>
       <Typography variant={isSmallScreen ? "h2" : "h3"}>Expenses</Typography>
+      <Button
+        size="large"
+        variant="contained"
+        color="primary"
+        onClick={toggleDialog}
+        className={classes.button}
+      >
+        Add Expense
+      </Button>
       <List className={classes.list}>
         <Expense
           category={"Vacations"}
@@ -52,14 +64,6 @@ const Expenses = () => {
           date={"05/01/2020"}
         />
       </List>
-      <Button
-        size="large"
-        variant="contained"
-        color="primary"
-        onClick={toggleDialog}
-      >
-        Add Item
-      </Button>
       <AddExpensesDialog handleClose={toggleDialog} open={open} />
     </Grid>
   );

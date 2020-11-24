@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
     },
   },
+  button: {
+    margin: theme.spacing(1),
+  },
 }));
 
 const ProjectionItems = () => {
@@ -47,19 +50,20 @@ const ProjectionItems = () => {
       <Typography variant={isSmallScreen ? "h2" : "h3"}>
         Projection 1 Items
       </Typography>
-      <List className={classes.list}>
-        <ProjectionItem category={"Vacations"} minValue={100} maxValue={200} />
-        <ProjectionItem category={"Food"} minValue={100} maxValue={200} />
-        <ProjectionItem category={"Legos"} minValue={100} maxValue={200} />
-      </List>
       <Button
         size="large"
         variant="contained"
         color="primary"
         onClick={toggleDialog}
+        className={classes.button}
       >
         Add Item
       </Button>
+      <List className={classes.list}>
+        <ProjectionItem category={"Vacations"} minValue={100} maxValue={200} />
+        <ProjectionItem category={"Food"} minValue={100} maxValue={200} />
+        <ProjectionItem category={"Legos"} minValue={100} maxValue={200} />
+      </List>
       <AddProjectionItemDialog handleClose={toggleDialog} open={open} />
     </Grid>
   );
