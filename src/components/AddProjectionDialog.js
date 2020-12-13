@@ -5,12 +5,14 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  FormHelperText,
   InputLabel,
   makeStyles,
   MenuItem,
   Select,
 } from "@material-ui/core";
 import React from "react";
+import { useFormError } from "../useFormError";
 import useFormState from "../useFormState";
 import months from "../utils/months";
 import getYears from "../utils/years";
@@ -30,26 +32,66 @@ const initialState = {
   year: "",
 };
 
-const AddProjectionDialog = ({ open, handleClose }) => {
+const AddProjectionDialog = ({ open, handleClose, addProjection }) => {
   const classes = useStyles();
   const [state, setState] = useFormState(initialState);
-
+  const [stateError, sendFormErrors, cleanErrors] = useFormError();
   const handleInputChange = (event) => {
     setState({
       [event.target.name]: event.target.value,
     });
   };
 
+  const getErrorMessages = () => {
+    let messages = null;
+    if (state.month === "" || state.month === 0) {
+      messages = {
+        month: "Debes escoger un mes de la lista",
+      };
+    }
+    if (state.year === "" || state.year === 0) {
+      messages = {
+        ...messages,
+        year: "Debes escoger un año de la lista",
+      };
+    }
+    return messages;
+  };
+
+  const handleSubmit = () => {
+    const errorMessages = getErrorMessages();
+    if (errorMessages) {
+      return sendFormErrors(errorMessages);
+    }
+    const projection = {
+      username: "Test",
+      month: state.month,
+      year: state.year,
+      createdAt: new Date(),
+    };
+    cleanForm();
+    addProjection(projection);
+  };
+
+  const cleanForm = () => {
+    setState(initialState);
+    cleanErrors();
+    handleClose();
+  };
+
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={cleanForm}
       fullWidth={true}
       aria-labelledby="add-projection-title"
     >
       <DialogTitle id="add-projection-title">Add Projection</DialogTitle>
       <DialogContent>
-        <FormControl className={classes.formControl}>
+        <FormControl
+          className={classes.formControl}
+          error={!!stateError.errorMessages?.month}
+        >
           <InputLabel id="months-select-label">Months</InputLabel>
           <Select
             labelId="months-select-label"
@@ -57,17 +99,22 @@ const AddProjectionDialog = ({ open, handleClose }) => {
             name="month"
             value={state.month}
             onChange={handleInputChange}
+            error={!!stateError.errorMessages?.month}
           >
-            {months.map((month) => {
+            {months.map((month, index) => {
               return (
-                <MenuItem value={month.toString().toLowerCase()} key={month}>
+                <MenuItem value={index + 1} key={month}>
                   {month}
                 </MenuItem>
               );
             })}
           </Select>
+          <FormHelperText>{stateError.errorMessages?.month}</FormHelperText>
         </FormControl>
-        <FormControl className={classes.formControl}>
+        <FormControl
+          className={classes.formControl}
+          error={!!stateError.errorMessages?.year}
+        >
           <InputLabel id="years-select-label">Years</InputLabel>
           <Select
             labelId="years-select-label"
@@ -75,6 +122,7 @@ const AddProjectionDialog = ({ open, handleClose }) => {
             name="year"
             value={state.year}
             onChange={handleInputChange}
+            error={!!stateError.errorMessages?.year}
           >
             {getYears(INITIAL_YEAR, FINAL_YEAR).map((year) => {
               return (
@@ -84,14 +132,15 @@ const AddProjectionDialog = ({ open, handleClose }) => {
               );
             })}
           </Select>
+          <FormHelperText>{stateError.errorMessages?.year}</FormHelperText>
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Cancel
+        <Button onClick={cleanForm} color="primary">
+          Cancelar
         </Button>
-        <Button onClick={handleClose} color="primary">
-          Subscribe
+        <Button onClick={handleSubmit} color="primary">
+          Guardar
         </Button>
       </DialogActions>
     </Dialog>

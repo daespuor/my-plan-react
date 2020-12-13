@@ -9,6 +9,7 @@ import ProjectionItems from "./components/ProjectionItems";
 import Expenses from "./components/Expenses";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import Error from "./components/Error";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,6 +42,7 @@ export default function App() {
             <ProjectionItems path="/projections/:id" />
             <Projections path="/projections" />
             <Expenses path="/expenses" />
+            <Error path="/error" />
           </Router>
           <Footer />
         </Container>
