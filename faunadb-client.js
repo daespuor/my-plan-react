@@ -11,9 +11,12 @@ const PROJECTIONS = "projections";
 const PROJECTION_ITEMS = "projection_items";
 
 const indices = {
-  projectionsByName: "projections_by_name",
+  projectionsByMonthAndYear: "projections_by_month_and_year",
   projectionsByUser: "projections_by_user",
+  projectionById: "projection_by_id",
   projectionItemByCategory: "projection_items_by_category",
+  projectionItemsByProjection: "projection_items_by_projection",
+  projections: "projections",
 };
 
 module.exports = {

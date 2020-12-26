@@ -39,7 +39,7 @@ const ERROR_SAVE = "ERROR_SAVE";
 const initialState = {
   loading: false,
   error: null,
-  projections: null,
+  projections: [],
 };
 
 const initialFormState = {
@@ -189,10 +189,11 @@ const Projections = () => {
       </Button>
       <List className={classes.list}>
         {loading && <LinearProgress color="secondary" />}
-        {projections &&
+        {projections.length &&
           projections.map((projection) => {
+            const { id } = projection.ref["@ref"];
             const name = `${months[projection.month - 1]} ${projection.year}`;
-            return <Projection name={name} key={name} />;
+            return <Projection name={name} projectionId={id} key={id} />;
           })}
       </List>
       <AddProjectionDialog

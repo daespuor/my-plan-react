@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
   },
 }));
-const Projection = ({ name }) => {
+const Projection = ({ name, projectionId }) => {
   const classes = useStyles();
   return (
     <ListItem>
@@ -31,8 +31,8 @@ const Projection = ({ name }) => {
         </Avatar>
       </ListItemAvatar>
       <Link
-        to={`/projections/${1}`}
-        title={`projection-${1}`}
+        to={`/projections/${projectionId}`}
+        title={`projection-${projectionId}`}
         className={classes.link}
       >
         <ListItemText primary={name} />

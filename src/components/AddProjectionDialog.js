@@ -66,7 +66,7 @@ const AddProjectionDialog = ({ open, handleClose, addProjection }) => {
     const projection = {
       username: "Test",
       month: state.month,
-      year: state.year,
+      year: Number(state.year),
       createdAt: new Date(),
     };
     cleanForm();

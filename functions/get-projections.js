@@ -7,8 +7,8 @@ exports.handler = async function (event, context) {
       q.Map(
         q.Paginate(q.Match(q.Index(indices.projectionsByUser), username)),
         q.Lambda("projectionArray", {
-          month: q.Select([0], q.Var("projectionArray")),
-          year: q.Select([1], q.Var("projectionArray")),
+          month: q.Select([1], q.Var("projectionArray")),
+          year: q.Select([0], q.Var("projectionArray")),
           ref: q.Select([2], q.Var("projectionArray")),
         })
       )
