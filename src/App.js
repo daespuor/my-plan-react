@@ -10,6 +10,9 @@ import Expenses from "./components/Expenses";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Error from "./components/Error";
+import { IdentityContextProvider } from "react-netlify-identity";
+import "react-netlify-identity-widget/styles.css";
+import "@reach/tabs/styles.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,24 +32,26 @@ const useStyles = makeStyles((theme) => ({
 
 export default function App() {
   const classes = useStyles();
-
+  const url = "https://daespuor-my-plan.netlify.app";
   return (
     <div className={classes.root}>
-      <CssBaseline />
-      <NavBar />
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Router>
-            <Charts path="/" />
-            <ProjectionItems path="/projections/:id" />
-            <Projections path="/projections" />
-            <Expenses path="/expenses" />
-            <Error path="/error" />
-          </Router>
-          <Footer />
-        </Container>
-      </main>
+      <IdentityContextProvider url={url}>
+        <CssBaseline />
+        <NavBar />
+        <main className={classes.content}>
+          <div className={classes.appBarSpacer} />
+          <Container maxWidth="lg" className={classes.container}>
+            <Router>
+              <Charts path="/" />
+              <ProjectionItems path="/projections/:id" />
+              <Projections path="/projections" />
+              <Expenses path="/expenses" />
+              <Error path="/error" />
+            </Router>
+            <Footer />
+          </Container>
+        </main>
+      </IdentityContextProvider>
     </div>
   );
 }
