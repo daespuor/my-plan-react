@@ -87,6 +87,7 @@ const setupProjectionItems = async () => {
           { field: ["data", "maxValue"] },
           { field: ["ref"] },
         ],
+        unique: true,
       })
     );
 
@@ -95,7 +96,6 @@ const setupProjectionItems = async () => {
     );
 
     if (projection) {
-      console.log(projection);
       const projectionItem = client.query(
         q.Create(q.Collection(PROJECTION_ITEMS), {
           data: {

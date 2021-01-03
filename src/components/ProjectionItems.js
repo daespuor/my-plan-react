@@ -18,10 +18,13 @@ import { BASE_URL } from "../utils/api";
 import months from "../utils/months";
 import CustomAlert from "./CustomAlert";
 import categories from "../utils/categories";
+import { currencyFormatter } from "../utils/format";
 
 const LOADING_PROJECTION_ITEMS = "LOADING_PROJECTION_ITEMS";
 const ERROR_PROJECTION_ITEMS = "ERROR_PROJECTION_ITEMS";
 const SUCCESS_PROJECTION_ITEMS = "SUCCESS_PROJECTION_ITEMS";
+const ERROR_DELETE = "ERROR_DELETE";
+const SUCCESS_DELETE = "SUCCESS_DELETE";
 const ERROR_PROJECTION = "ERROR_PROJECTION";
 const SUCCESS_PROJECTION = "SUCCESS_PROJECTION";
 const LOADING_PROJECTION = "LOADING_PROJECTION";
@@ -46,6 +49,8 @@ const initialState = {
   loading: false,
   error: null,
   projectionItems: [],
+  totalMaxValue: 0,
+  totalMinValue: 0,
   projection: null,
 };
 
@@ -63,11 +68,25 @@ const reducer = (state = initialState, action) => {
       loading: true,
     };
   }
-  if (type == SUCCESS_PROJECTION_ITEMS) {
+  if (type === SUCCESS_PROJECTION_ITEMS) {
+    const { projectionItems } = action.payload;
+    let totalMinValue,
+      totalMaxValue = 0;
+    if (projectionItems.length > 0) {
+      totalMinValue = projectionItems
+        .map((item) => Number(item.minValue))
+        .reduce((total, value) => total + value);
+      totalMaxValue = projectionItems
+        .map((item) => Number(item.maxValue))
+        .reduce((total, value) => total + value);
+    }
+
     return {
       ...state,
       loading: false,
-      projectionItems: action.payload.projectionItems,
+      projectionItems,
+      totalMinValue,
+      totalMaxValue,
     };
   }
   if (type == SUCCESS_PROJECTION) {
@@ -95,7 +114,14 @@ const reducerForm = (state = initialFormState, action) => {
       message: "Item guardado con éxito!",
     };
   }
-  if (type == ERROR_SAVE) {
+  if (type === SUCCESS_DELETE) {
+    return {
+      error: null,
+      success: true,
+      message: "Item eliminado con éxito!",
+    };
+  }
+  if (type == ERROR_SAVE || type === ERROR_DELETE) {
     return {
       success: false,
       error: true,
@@ -116,7 +142,9 @@ const useProjectionItems = (projectionId) => {
       .then((response) => {
         dispatch({
           type: SUCCESS_PROJECTION_ITEMS,
-          payload: { projectionItems: response },
+          payload: {
+            projectionItems: response,
+          },
         });
       })
       .catch((error) =>
@@ -147,7 +175,7 @@ const useProjectionItems = (projectionId) => {
   return [state, loadProjectionItems];
 };
 
-const useAddProjectionItem = (toggleAlert, loadProjectionItems) => {
+const useModifyProjectionItem = (toggleAlert, loadProjectionItems) => {
   const [state, dispatch] = useReducer(reducerForm, initialFormState);
   const { message, error } = state;
   const addProjectionItem = (projectionItem) => {
@@ -174,6 +202,30 @@ const useAddProjectionItem = (toggleAlert, loadProjectionItems) => {
       .catch((error) => dispatch({ type: ERROR_SAVE, payload: { error } }));
   };
 
+  const deleteProjectionItem = (projectionItemId) => {
+    fetch(
+      `${BASE_URL}/delete-projection-items?projectionItemId=${projectionItemId}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if (response.status == "200") {
+          dispatch({ type: SUCCESS_DELETE });
+        } else {
+          dispatch({
+            type: ERROR_DELETE,
+            payload: { error: response.statusText },
+          });
+        }
+      })
+      .catch((error) => dispatch({ type: ERROR_DELETE, payload: { error } }));
+  };
+
   useEffect(() => {
     if (message) {
       toggleAlert();
@@ -183,7 +235,7 @@ const useAddProjectionItem = (toggleAlert, loadProjectionItems) => {
     }
   }, [message, error]);
 
-  return [state, addProjectionItem];
+  return [state, addProjectionItem, deleteProjectionItem];
 };
 
 const ProjectionItems = ({ id }) => {
@@ -195,12 +247,20 @@ const ProjectionItems = ({ id }) => {
   const toggleDialog = () => setOpen(!open);
   const toggleAlert = () => setOpenAlert(!openAlert);
   const [state, loadProjectionItems] = useProjectionItems(id);
-  const [stateAddProjectionItem, addProjectionItem] = useAddProjectionItem(
-    toggleAlert,
-    loadProjectionItems
-  );
+  const [
+    stateAddProjectionItem,
+    addProjectionItem,
+    deleteProjectionItem,
+  ] = useModifyProjectionItem(toggleAlert, loadProjectionItems);
   const goToProjections = () => navigate("/projections");
-  const { projectionItems, error, loading, projection } = state;
+  const {
+    projectionItems,
+    error,
+    loading,
+    projection,
+    totalMaxValue,
+    totalMinValue,
+  } = state;
   const name = projection
     ? `${months[projection.month - 1]} ${projection.year}`
     : "";
@@ -209,6 +269,12 @@ const ProjectionItems = ({ id }) => {
     return <Redirect to="/error" />;
   }
 
+  const totalMessage =
+    totalMinValue < totalMaxValue
+      ? `${currencyFormatter.format(
+          totalMinValue
+        )} - ${currencyFormatter.format(totalMaxValue)}`
+      : currencyFormatter.format(totalMinValue);
   return (
     <Grid item xs={12} className={classes.list}>
       <IconButton
@@ -222,6 +288,7 @@ const ProjectionItems = ({ id }) => {
       <Typography variant={isSmallScreen ? "h2" : "h3"}>
         Projection {name} Items
       </Typography>
+      <Typography variant="h6">Total {totalMessage}</Typography>
       <Button
         size="large"
         variant="contained"
@@ -246,6 +313,8 @@ const ProjectionItems = ({ id }) => {
                 maxValue={maxValue}
                 icon={icon}
                 key={id}
+                id={id}
+                onDelete={deleteProjectionItem}
               />
             );
           })}
