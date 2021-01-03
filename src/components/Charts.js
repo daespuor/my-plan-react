@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Chart from "./Chart";
 import Deposits from "./Deposits";
 import Orders from "./Orders";
@@ -6,7 +6,6 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core";
 import clsx from "clsx";
-import { IdentityModal } from "react-netlify-identity-widget";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -22,8 +21,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Charts = () => {
   const classes = useStyles();
-  const [visualize, setVisualize] = useState(true);
-  const showDialog = () => setVisualize(!visualize);
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   return (
     <>
@@ -47,7 +44,6 @@ const Charts = () => {
           </Paper>
         </Grid>
       </Grid>
-      <IdentityModal showDialog={visualize} onCloseDialog={showDialog} />
     </>
   );
 };

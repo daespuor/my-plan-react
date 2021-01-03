@@ -32,7 +32,7 @@ const initialState = {
   year: "",
 };
 
-const AddProjectionDialog = ({ open, handleClose, addProjection }) => {
+const AddProjectionDialog = ({ open, handleClose, addProjection, email }) => {
   const classes = useStyles();
   const [state, setState] = useFormState(initialState);
   const [stateError, sendFormErrors, cleanErrors] = useFormError();
@@ -64,7 +64,7 @@ const AddProjectionDialog = ({ open, handleClose, addProjection }) => {
       return sendFormErrors(errorMessages);
     }
     const projection = {
-      username: "Test",
+      username: email,
       month: state.month,
       year: Number(state.year),
       createdAt: new Date(),

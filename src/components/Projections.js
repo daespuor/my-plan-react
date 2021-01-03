@@ -15,6 +15,7 @@ import months from "../utils/months";
 import AddProjectionDialog from "./AddProjectionDialog";
 import CustomAlert from "./CustomAlert";
 import Projection from "./Projection";
+import { useIdentityContext } from "react-netlify-identity";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -92,12 +93,16 @@ const reducerForm = (state = initialFormState, action) => {
   return state;
 };
 
-const useProjections = () => {
+const useProjections = (email, token) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const loadProjections = () => {
     dispatch({ type: LOADING_PROJECTIONS });
-    fetch(`${BASE_URL}/get-projections?username=Test`)
+    fetch(`${BASE_URL}/get-projections?username=${email}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((response) => {
         dispatch({
@@ -117,7 +122,7 @@ const useProjections = () => {
   return [state, loadProjections];
 };
 
-const useAddProjection = (toggleAlert, loadProjections) => {
+const useAddProjection = (toggleAlert, loadProjections, token) => {
   const [state, dispatch] = useReducer(reducerForm, initialFormState);
   const { message, error } = state;
   const addProjection = (projection) => {
@@ -126,6 +131,7 @@ const useAddProjection = (toggleAlert, loadProjections) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         projection,
@@ -163,16 +169,29 @@ const Projections = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const toggleDialog = () => setOpen(!open);
   const toggleAlert = () => setOpenAlert(!openAlert);
-  const [state, loadProjections] = useProjections();
+  const identity = useIdentityContext();
+  const isLoggedIn = identity && identity.isLoggedIn;
+  const email = identity && identity.user && identity.user.email;
+  const token =
+    identity &&
+    identity.user &&
+    identity.user.token &&
+    identity.user.token.access_token;
+  const [state, loadProjections] = useProjections(email, token);
   const classes = useStyles();
   const [stateAddProjection, addProjection] = useAddProjection(
     toggleAlert,
-    loadProjections
+    loadProjections,
+    token
   );
   const { projections, loading, error } = state;
 
   if (error) {
-    return <Redirect to="/error" />;
+    return <Redirect noThrow={true} to="/error" />;
+  }
+
+  if (!isLoggedIn) {
+    return <Redirect noThrow={true} to="/" />;
   }
 
   return (
@@ -198,6 +217,7 @@ const Projections = () => {
       </List>
       <AddProjectionDialog
         open={open}
+        email={email}
         handleClose={toggleDialog}
         addProjection={addProjection}
       />

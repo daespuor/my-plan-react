@@ -19,6 +19,7 @@ import months from "../utils/months";
 import CustomAlert from "./CustomAlert";
 import categories from "../utils/categories";
 import { currencyFormatter } from "../utils/format";
+import { useIdentityContext } from "react-netlify-identity";
 
 const LOADING_PROJECTION_ITEMS = "LOADING_PROJECTION_ITEMS";
 const ERROR_PROJECTION_ITEMS = "ERROR_PROJECTION_ITEMS";
@@ -132,12 +133,16 @@ const reducerForm = (state = initialFormState, action) => {
   return state;
 };
 
-const useProjectionItems = (projectionId) => {
+const useProjectionItems = (projectionId, token) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const loadProjectionItems = () => {
     dispatch({ type: LOADING_PROJECTION_ITEMS });
-    fetch(`${BASE_URL}/get-projection-items?projectionId=${projectionId}`)
+    fetch(`${BASE_URL}/get-projection-items?projectionId=${projectionId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((response) => {
         dispatch({
@@ -154,7 +159,11 @@ const useProjectionItems = (projectionId) => {
 
   const loadProjection = () => {
     dispatch({ type: LOADING_PROJECTION });
-    fetch(`${BASE_URL}/get-projection?projectionId=${projectionId}`)
+    fetch(`${BASE_URL}/get-projection?projectionId=${projectionId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => response.json())
       .then((response) => {
         dispatch({
@@ -175,7 +184,7 @@ const useProjectionItems = (projectionId) => {
   return [state, loadProjectionItems];
 };
 
-const useModifyProjectionItem = (toggleAlert, loadProjectionItems) => {
+const useModifyProjectionItem = (toggleAlert, loadProjectionItems, token) => {
   const [state, dispatch] = useReducer(reducerForm, initialFormState);
   const { message, error } = state;
   const addProjectionItem = (projectionItem) => {
@@ -184,6 +193,7 @@ const useModifyProjectionItem = (toggleAlert, loadProjectionItems) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         projectionItem,
@@ -210,6 +220,7 @@ const useModifyProjectionItem = (toggleAlert, loadProjectionItems) => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     )
@@ -246,12 +257,18 @@ const ProjectionItems = ({ id }) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.up("sm"));
   const toggleDialog = () => setOpen(!open);
   const toggleAlert = () => setOpenAlert(!openAlert);
-  const [state, loadProjectionItems] = useProjectionItems(id);
+  const identity = useIdentityContext();
+  const token =
+    identity &&
+    identity.user &&
+    identity.user.token &&
+    identity.user.token.access_token;
+  const [state, loadProjectionItems] = useProjectionItems(id, token);
   const [
     stateAddProjectionItem,
     addProjectionItem,
     deleteProjectionItem,
-  ] = useModifyProjectionItem(toggleAlert, loadProjectionItems);
+  ] = useModifyProjectionItem(toggleAlert, loadProjectionItems, token);
   const goToProjections = () => navigate("/projections");
   const {
     projectionItems,
@@ -265,8 +282,14 @@ const ProjectionItems = ({ id }) => {
     ? `${months[projection.month - 1]} ${projection.year}`
     : "";
 
+  const isLoggedIn = identity && identity.isLoggedIn;
+
+  if (!isLoggedIn) {
+    return <Redirect noThrow={true} to="/" />;
+  }
+
   if (error) {
-    return <Redirect to="/error" />;
+    return <Redirect noThrow={true} to="/error" />;
   }
 
   const totalMessage =

@@ -3,17 +3,18 @@ import Drawer from "@material-ui/core/Drawer";
 import React from "react";
 import clsx from "clsx";
 import {
-  Badge,
   Divider,
   IconButton,
   makeStyles,
   Toolbar,
   Typography,
 } from "@material-ui/core";
+import PersonIcon from "@material-ui/icons/Person";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import NavItems from "./NavItems";
+import { useIdentityContext } from "react-netlify-identity";
 
 const drawerWidth = 240;
 
@@ -74,9 +75,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NavBar = () => {
+const NavBar = ({ toggleSession }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const identity = useIdentityContext();
+  const isLoggedIn = identity && identity.isLoggedIn;
+  const name =
+    identity &&
+    identity.user &&
+    identity.user.user_metadata &&
+    identity.user.user_metadata.full_name;
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -111,10 +119,18 @@ const NavBar = () => {
           >
             My Plan
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
+          <IconButton color="inherit" onClick={toggleSession}>
+            {isLoggedIn ? (
+              <>
+                <Typography variant="subtitle2">Chao {name}</Typography>
+                <ExitToAppIcon titleAccess="logout" />
+              </>
+            ) : (
+              <PersonIcon titleAccess="login" />
+            )}
+            <Typography variant="srOnly">
+              {isLoggedIn ? "Logout" : "Login"}
+            </Typography>
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -132,7 +148,7 @@ const NavBar = () => {
           </IconButton>
         </div>
         <Divider />
-        <NavItems />
+        <NavItems isLoggedIn={isLoggedIn} />
       </Drawer>
     </>
   );

@@ -3,10 +3,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import {
-  Money as MoneyIcon,
-  ShowChart as ShowChartIcon,
-} from "@material-ui/icons";
+import { ShowChart as ShowChartIcon } from "@material-ui/icons";
 import { Link } from "@reach/router";
 import { List, makeStyles } from "@material-ui/core";
 
@@ -20,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NavItems = () => {
+const NavItems = ({ isLoggedIn }) => {
   const classes = useStyles();
   return (
     <List>
@@ -32,22 +29,24 @@ const NavItems = () => {
           <ListItemText primary="Dashboard" />
         </ListItem>
       </Link>
-      <Link to="/projections" className={classes.link}>
-        <ListItem button>
-          <ListItemIcon>
-            <ShowChartIcon />
-          </ListItemIcon>
-          <ListItemText primary="Projections" />
-        </ListItem>
-      </Link>
-      <Link to="/expenses" className={classes.link}>
+      {isLoggedIn && (
+        <Link to="/projections" className={classes.link}>
+          <ListItem button>
+            <ListItemIcon>
+              <ShowChartIcon />
+            </ListItemIcon>
+            <ListItemText primary="Projections" />
+          </ListItem>
+        </Link>
+      )}
+      {/* <Link to="/expenses" className={classes.link}>
         <ListItem button>
           <ListItemIcon>
             <MoneyIcon />
           </ListItemIcon>
           <ListItemText primary="Expenses" />
         </ListItem>
-      </Link>
+      </Link> */}
     </List>
   );
 };

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Router } from "@reach/router";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Charts from "./components/Charts";
 import { IdentityContextProvider } from "react-netlify-identity";
+import { IdentityModal } from "react-netlify-identity-widget";
 import Projections from "./components/Projections";
 import ProjectionItems from "./components/ProjectionItems";
 import Expenses from "./components/Expenses";
@@ -32,12 +33,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function App() {
   const classes = useStyles();
+  const [visualize, setVisualize] = useState(false);
+  const showDialog = () => setVisualize(!visualize);
   const url = "https://daespuor-my-plan.netlify.app";
   return (
     <div className={classes.root}>
       <IdentityContextProvider url={url}>
         <CssBaseline />
-        <NavBar />
+        <NavBar toggleSession={showDialog} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
@@ -50,6 +53,7 @@ export default function App() {
             </Router>
             <Footer />
           </Container>
+          <IdentityModal showDialog={visualize} onCloseDialog={showDialog} />
         </main>
       </IdentityContextProvider>
     </div>

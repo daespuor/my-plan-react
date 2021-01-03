@@ -43,29 +43,31 @@ const ProjectionItem = ({
 
   const toggleDeleteDialog = () => setDeleteOpen(!deleteOpen);
   return (
-    <ListItem>
-      <ListItemAvatar>
-        <Avatar className={classes.avatar}>
-          <Icon>{icon || "emoji_emotions"}</Icon>
-        </Avatar>
-      </ListItemAvatar>
-      <ListItemText primary={category} secondary={valueText} />
-      <ListItemSecondaryAction>
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          title="delete"
-          onClick={toggleDeleteDialog}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </ListItemSecondaryAction>
+    <>
+      <ListItem>
+        <ListItemAvatar>
+          <Avatar className={classes.avatar}>
+            <Icon>{icon || "emoji_emotions"}</Icon>
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText primary={category} secondary={valueText} />
+        <ListItemSecondaryAction>
+          <IconButton
+            edge="end"
+            aria-label="delete"
+            title="delete"
+            onClick={toggleDeleteDialog}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
       <ConfirmDialog
         open={deleteOpen}
         handleClose={toggleDeleteDialog}
         handleAgree={() => onDelete(id)}
       />
-    </ListItem>
+    </>
   );
 };
 
