@@ -4,13 +4,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Charts from "./components/Charts";
+import { IdentityContextProvider } from "react-netlify-identity";
 import Projections from "./components/Projections";
 import ProjectionItems from "./components/ProjectionItems";
 import Expenses from "./components/Expenses";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Error from "./components/Error";
-import { IdentityContextProvider } from "react-netlify-identity";
 import "react-netlify-identity-widget/styles.css";
 import "@reach/tabs/styles.css";
 
