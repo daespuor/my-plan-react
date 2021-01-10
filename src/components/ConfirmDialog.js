@@ -14,18 +14,18 @@ export default function ConfirmDialog({ handleClose, open, handleAgree }) {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Delete Element?</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Eliminar Elemento</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to delete the element?
+          Estas segur@ de que deseas eliminar el elemento?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
-          Disagree
+          Cancelar
         </Button>
         <Button onClick={handleAgree} color="primary">
-          Agree
+          Aceptar
         </Button>
       </DialogActions>
     </Dialog>

@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Charts from "./components/Charts";
+// eslint-disable-next-line import/no-unresolved
 import { IdentityContextProvider } from "react-netlify-identity";
 import { IdentityModal } from "react-netlify-identity-widget";
 import Projections from "./components/Projections";

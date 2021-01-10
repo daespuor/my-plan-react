@@ -1,13 +1,9 @@
 import React from "react";
-import Chart from "./Chart";
-import Deposits from "./Deposits";
-import Orders from "./Orders";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import { makeStyles } from "@material-ui/core";
-import clsx from "clsx";
+// eslint-disable-next-line import/no-unresolved
+import { useIdentityContext } from "react-netlify-identity";
+import { Typography } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
+/*const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(2),
     display: "flex",
@@ -17,33 +13,41 @@ const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: 240,
   },
-}));
+}));*/
 
 const Charts = () => {
-  const classes = useStyles();
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  //const classes = useStyles();
+  //const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const identity = useIdentityContext();
+  const name =
+    identity &&
+    identity.user &&
+    identity.user.user_metadata &&
+    identity.user.user_metadata.full_name;
   return (
     <>
-      <Grid container spacing={3}>
-        {/* Chart */}
+      {name ? (
+        <Typography variant="h2">Bienvenid@ {name}!</Typography>
+      ) : (
+        <Typography variant="h2">Ingresa al sitio por favor!</Typography>
+      )}
+      {/* <Grid container spacing={3}>
         <Grid item xs={12} md={8} lg={9}>
           <Paper className={fixedHeightPaper}>
             <Chart />
           </Paper>
         </Grid>
-        {/* Recent Deposits */}
         <Grid item xs={12} md={4} lg={3}>
           <Paper className={fixedHeightPaper}>
             <Deposits />
           </Paper>
         </Grid>
-        {/* Recent Orders */}
         <Grid item xs={12}>
           <Paper className={classes.paper}>
             <Orders />
           </Paper>
         </Grid>
-      </Grid>
+      </Grid> */}
     </>
   );
 };

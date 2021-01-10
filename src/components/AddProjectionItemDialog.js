@@ -19,6 +19,7 @@ import useCategoryChange from "../useCategoryChange";
 import { useFormError } from "../useFormError";
 import useFormState from "../useFormState";
 import categories from "../utils/categories";
+import CurrencyFormat from "react-currency-format";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -92,7 +93,7 @@ const AddProjectionItemDialog = ({
     const projectionItem = {
       category: state.category,
       minValue: state.minValue,
-      maxValue: state.maxValue,
+      maxValue: state.maxValue ? state.maxValue : state.minValue,
       projectionRef: projectionId,
       createdAt: new Date(),
     };
@@ -114,7 +115,7 @@ const AddProjectionItemDialog = ({
       aria-labelledby="add-projection-item-title"
     >
       <DialogTitle id="add-projection-item-title">
-        Add Projection Item
+        Añadir Item Proyección
       </DialogTitle>
       <DialogContent>
         <Avatar className={classes.avatar}>
@@ -124,7 +125,7 @@ const AddProjectionItemDialog = ({
           className={classes.formControl}
           error={!!stateError.errorMessages?.category}
         >
-          <InputLabel id="category-select-label">Category</InputLabel>
+          <InputLabel id="category-select-label">Categoria</InputLabel>
           <Select
             labelId="category-select-label"
             id="category-select"
@@ -147,13 +148,18 @@ const AddProjectionItemDialog = ({
           className={classes.formControl}
           error={!!stateError.errorMessages?.minValue}
         >
-          <TextField
-            type="text"
-            label="$ Minimum Value"
-            id="min-value"
-            name="minValue"
+          <CurrencyFormat
             value={state.minValue}
-            onChange={handleInputChange}
+            customInput={TextField}
+            label="Valor mínimo"
+            thousandSeparator={true}
+            prefix={"$"}
+            onValueChange={(values) => {
+              const { value } = values;
+              setState({
+                minValue: value,
+              });
+            }}
           />
           <FormHelperText>{stateError.errorMessages?.minValue}</FormHelperText>
         </FormControl>
@@ -162,13 +168,18 @@ const AddProjectionItemDialog = ({
             className={classes.formControl}
             error={!!stateError.errorMessages?.maxValue}
           >
-            <TextField
-              type="text"
-              label="$ Maximum Value"
-              id="max-value"
-              name="maxValue"
+            <CurrencyFormat
               value={state.maxValue}
-              onChange={handleInputChange}
+              customInput={TextField}
+              label="Valor máximo"
+              thousandSeparator={true}
+              prefix={"$"}
+              onValueChange={(values) => {
+                const { value } = values;
+                setState({
+                  maxValue: value,
+                });
+              }}
             />
             <FormHelperText>
               {stateError.errorMessages?.maxValue}

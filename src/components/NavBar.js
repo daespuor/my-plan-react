@@ -14,6 +14,7 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NavItems from "./NavItems";
+// eslint-disable-next-line import/no-unresolved
 import { useIdentityContext } from "react-netlify-identity";
 
 const drawerWidth = 240;
@@ -30,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
   },
   appBar: {
-    zIndex: 0,
+    zIndex: 1,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,

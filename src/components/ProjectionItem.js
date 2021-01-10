@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 const getValueText = (minValue, maxValue) => {
   let result = `${currencyFormatter.format(minValue)}`;
-  if (maxValue) {
+  if (maxValue && maxValue > minValue) {
     result = `${currencyFormatter.format(
       minValue
     )} - ${currencyFormatter.format(maxValue)}`;

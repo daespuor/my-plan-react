@@ -86,13 +86,13 @@ const AddProjectionDialog = ({ open, handleClose, addProjection, email }) => {
       fullWidth={true}
       aria-labelledby="add-projection-title"
     >
-      <DialogTitle id="add-projection-title">Add Projection</DialogTitle>
+      <DialogTitle id="add-projection-title">Añadir Proyección</DialogTitle>
       <DialogContent>
         <FormControl
           className={classes.formControl}
           error={!!stateError.errorMessages?.month}
         >
-          <InputLabel id="months-select-label">Months</InputLabel>
+          <InputLabel id="months-select-label">Mes</InputLabel>
           <Select
             labelId="months-select-label"
             id="months-select"
@@ -115,7 +115,7 @@ const AddProjectionDialog = ({ open, handleClose, addProjection, email }) => {
           className={classes.formControl}
           error={!!stateError.errorMessages?.year}
         >
-          <InputLabel id="years-select-label">Years</InputLabel>
+          <InputLabel id="years-select-label">Año</InputLabel>
           <Select
             labelId="years-select-label"
             id="years-select"

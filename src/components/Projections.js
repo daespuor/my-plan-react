@@ -15,6 +15,7 @@ import months from "../utils/months";
 import AddProjectionDialog from "./AddProjectionDialog";
 import CustomAlert from "./CustomAlert";
 import Projection from "./Projection";
+// eslint-disable-next-line import/no-unresolved
 import { useIdentityContext } from "react-netlify-identity";
 
 const useStyles = makeStyles((theme) => ({
@@ -124,7 +125,6 @@ const useProjections = (email, token) => {
 
 const useAddProjection = (toggleAlert, loadProjections, token) => {
   const [state, dispatch] = useReducer(reducerForm, initialFormState);
-  const { message, error } = state;
   const addProjection = (projection) => {
     fetch(`${BASE_URL}/add-projections`, {
       method: "POST",
@@ -151,13 +151,14 @@ const useAddProjection = (toggleAlert, loadProjections, token) => {
   };
 
   useEffect(() => {
+    const { message, error } = state;
     if (message) {
       toggleAlert();
       if (!error) {
         loadProjections();
       }
     }
-  }, [message, error]);
+  }, [state]);
 
   return [state, addProjection];
 };
@@ -196,7 +197,9 @@ const Projections = () => {
 
   return (
     <Grid item xs={12} className={classes.list}>
-      <Typography variant={isSmallScreen ? "h2" : "h3"}>Projections</Typography>
+      <Typography variant={isSmallScreen ? "h2" : "h3"}>
+        Proyecciones
+      </Typography>
       <Button
         size="large"
         variant="contained"
@@ -204,7 +207,7 @@ const Projections = () => {
         onClick={toggleDialog}
         className={classes.button}
       >
-        Add Projection
+        Añadir Proyección
       </Button>
       <List className={classes.list}>
         {loading && <LinearProgress color="secondary" />}

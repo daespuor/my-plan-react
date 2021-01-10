@@ -19,6 +19,7 @@ import months from "../utils/months";
 import CustomAlert from "./CustomAlert";
 import categories from "../utils/categories";
 import { currencyFormatter } from "../utils/format";
+// eslint-disable-next-line import/no-unresolved
 import { useIdentityContext } from "react-netlify-identity";
 
 const LOADING_PROJECTION_ITEMS = "LOADING_PROJECTION_ITEMS";
@@ -71,17 +72,16 @@ const reducer = (state = initialState, action) => {
   }
   if (type === SUCCESS_PROJECTION_ITEMS) {
     const { projectionItems } = action.payload;
-    let totalMinValue,
+    let totalMinValue = 0,
       totalMaxValue = 0;
     if (projectionItems.length > 0) {
       totalMinValue = projectionItems
         .map((item) => Number(item.minValue))
-        .reduce((total, value) => total + value);
+        .reduce((total, value) => total + value, 0);
       totalMaxValue = projectionItems
         .map((item) => Number(item.maxValue))
-        .reduce((total, value) => total + value);
+        .reduce((total, value) => total + value, 0);
     }
-
     return {
       ...state,
       loading: false,
@@ -186,7 +186,6 @@ const useProjectionItems = (projectionId, token) => {
 
 const useModifyProjectionItem = (toggleAlert, loadProjectionItems, token) => {
   const [state, dispatch] = useReducer(reducerForm, initialFormState);
-  const { message, error } = state;
   const addProjectionItem = (projectionItem) => {
     fetch(`${BASE_URL}/add-projection-items`, {
       method: "POST",
@@ -238,13 +237,14 @@ const useModifyProjectionItem = (toggleAlert, loadProjectionItems, token) => {
   };
 
   useEffect(() => {
+    const { message, error } = state;
     if (message) {
       toggleAlert();
       if (!error) {
         loadProjectionItems();
       }
     }
-  }, [message, error]);
+  }, [state]);
 
   return [state, addProjectionItem, deleteProjectionItem];
 };
@@ -293,7 +293,7 @@ const ProjectionItems = ({ id }) => {
   }
 
   const totalMessage =
-    totalMinValue < totalMaxValue
+    totalMinValue !== totalMaxValue
       ? `${currencyFormatter.format(
           totalMinValue
         )} - ${currencyFormatter.format(totalMaxValue)}`
@@ -309,7 +309,7 @@ const ProjectionItems = ({ id }) => {
         <ArrowBackIcon />
       </IconButton>
       <Typography variant={isSmallScreen ? "h2" : "h3"}>
-        Projection {name} Items
+        Items Proyección {name}
       </Typography>
       <Typography variant="h6">Total {totalMessage}</Typography>
       <Button
@@ -319,7 +319,7 @@ const ProjectionItems = ({ id }) => {
         onClick={toggleDialog}
         className={classes.button}
       >
-        Add Item
+        Añadir Item
       </Button>
       <List className={classes.list}>
         {loading && <LinearProgress color="secondary" />}

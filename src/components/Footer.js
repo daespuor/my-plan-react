@@ -6,7 +6,7 @@ const Footer = () => {
     <Box pt={4}>
       <Typography variant="body2" color="textSecondary" align="center">
         {"Copyright © "}
-        {"My Web Side"}
+        {"My Plan "}
         {new Date().getFullYear()}
         {"."}
       </Typography>
