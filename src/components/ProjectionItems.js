@@ -309,7 +309,7 @@ const ProjectionItems = ({ id }) => {
         <ArrowBackIcon />
       </IconButton>
       <Typography variant={isSmallScreen ? "h2" : "h3"}>
-        Items Proyección {name}
+        Proyección {name}
       </Typography>
       <Typography variant="h6">Total {totalMessage}</Typography>
       <Button

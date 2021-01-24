@@ -35,7 +35,7 @@ const NavItems = ({ isLoggedIn }) => {
             <ListItemIcon>
               <ShowChartIcon />
             </ListItemIcon>
-            <ListItemText primary="Projections" />
+            <ListItemText primary="Proyecciones" />
           </ListItem>
         </Link>
       )}
