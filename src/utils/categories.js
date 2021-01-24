@@ -54,6 +54,30 @@ const categories = [
     icon: "work",
   },
   {
+    name: "beauty",
+    label: "Belleza",
+    type: "nonFixed",
+    icon: "brush",
+  },
+  {
+    name: "taxes",
+    label: "Recibos",
+    type: "fixed",
+    icon: "receipt_long",
+  },
+  {
+    name: "cats",
+    label: "Gatos",
+    type: "nonFixed",
+    icon: "pets",
+  },
+  {
+    name: "education",
+    label: "Educacion",
+    type: "nonFixed",
+    icon: "cast_for_education",
+  },
+  {
     name: "games",
     label: "Juegos",
     type: "nonFixed",

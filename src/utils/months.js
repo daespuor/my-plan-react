@@ -1,16 +1,16 @@
 const months = [
-  "January",
-  "Febrary",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "Agust",
-  "September",
-  "October",
-  "November",
-  "Dicember",
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septimbre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
 ];
 
 export default months;
