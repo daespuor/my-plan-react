@@ -3,7 +3,10 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import { ShowChart as ShowChartIcon } from "@material-ui/icons";
+import {
+  AccountBalanceWallet,
+  ShowChart as ShowChartIcon,
+} from "@material-ui/icons";
 import { Link } from "@reach/router";
 import { List, makeStyles } from "@material-ui/core";
 
@@ -30,14 +33,24 @@ const NavItems = ({ isLoggedIn }) => {
         </ListItem>
       </Link>
       {isLoggedIn && (
-        <Link to="/projections" className={classes.link}>
-          <ListItem button>
-            <ListItemIcon>
-              <ShowChartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Proyecciones" />
-          </ListItem>
-        </Link>
+        <>
+          <Link to="/projections" className={classes.link}>
+            <ListItem button>
+              <ListItemIcon>
+                <ShowChartIcon />
+              </ListItemIcon>
+              <ListItemText primary="Proyecciones" />
+            </ListItem>
+          </Link>
+          <Link to="/account" className={classes.link}>
+            <ListItem button>
+              <ListItemIcon>
+                <AccountBalanceWallet />
+              </ListItemIcon>
+              <ListItemText primary="Cuenta" />
+            </ListItem>
+          </Link>
+        </>
       )}
       {/* <Link to="/expenses" className={classes.link}>
         <ListItem button>

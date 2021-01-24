@@ -3,6 +3,7 @@ const {
   q,
   PROJECTIONS,
   PROJECTION_ITEMS,
+  PARAMETERS,
 } = require("../faunadb-client");
 
 const setupProjections = async () => {
@@ -113,11 +114,38 @@ const setupProjectionItems = async () => {
   }
 };
 
+const setupGeneralParameters = async () => {
+  const existParameters = await client.query(
+    q.Exists(q.Collection(PARAMETERS))
+  );
+
+  if (!existParameters) {
+    await client.query(q.CreateCollection({ name: PARAMETERS }));
+    await client.query(
+      q.CreateIndex({
+        name: "parameters_by_username",
+        source: q.Collection(PARAMETERS),
+        terms: [{ field: ["data", "username"] }],
+        values: [
+          { field: ["data", "name"] },
+          { field: ["data", "value"] },
+          { field: ["data", "total"] },
+          { field: ["data", "month"] },
+          { field: ["data", "year"] },
+          { field: ["data", "timestamp"], reverse: true },
+          { field: ["ref"] },
+        ],
+      })
+    );
+  }
+};
+
 exports.handler = async function (event, context) {
   // your server-side functionality
   try {
     await setupProjections();
     await setupProjectionItems();
+    await setupGeneralParameters();
     return {
       statusCode: 200,
       body: JSON.stringify({ message: "my text" }),

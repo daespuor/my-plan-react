@@ -9,7 +9,7 @@ const client = new faunadb.Client({
 });
 const PROJECTIONS = "projections";
 const PROJECTION_ITEMS = "projection_items";
-
+const PARAMETERS = "parameters";
 const indices = {
   projectionsByMonthAndYear: "projections_by_month_and_year",
   projectionsByUser: "projections_by_user",
@@ -17,6 +17,7 @@ const indices = {
   projectionItemByCategory: "projection_items_by_category",
   projectionItemsByProjection: "projection_items_by_projection",
   projections: "projections",
+  parameters: "parameters_by_username",
 };
 
 module.exports = {
@@ -24,5 +25,6 @@ module.exports = {
   client,
   PROJECTIONS,
   PROJECTION_ITEMS,
+  PARAMETERS,
   indices,
 };

@@ -15,6 +15,7 @@ import Footer from "./components/Footer";
 import Error from "./components/Error";
 import "react-netlify-identity-widget/styles.css";
 import "@reach/tabs/styles.css";
+import Account from "./components/Account";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,6 +51,7 @@ export default function App() {
               <ProjectionItems path="/projections/:id" />
               <Projections path="/projections" />
               <Expenses path="/expenses" />
+              <Account path="/account" />
               <Error path="/error" />
             </Router>
             <Footer />
