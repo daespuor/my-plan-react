@@ -1,7 +1,6 @@
 import { makeStyles } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import PiggyBank from "../assets/icons/piggy-bank.svg";
-import { useSpring, animated, useTransition } from "react-spring";
+import React, { useEffect } from "react";
+import { useSpring, animated } from "react-spring";
 
 const useStyle = makeStyles((theme) => ({
   overlay: {
@@ -30,7 +29,7 @@ const useStyle = makeStyles((theme) => ({
 
 const LoadingOverlay = () => {
   const classes = useStyle();
-  const [props, set, stop] = useSpring(() => ({
+  const [props, set] = useSpring(() => ({
     x: 1400,
   }));
   useEffect(() => {
