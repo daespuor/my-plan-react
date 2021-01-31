@@ -10,7 +10,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import React, { useEffect, useReducer, useState } from "react";
-import { navigate, Redirect } from "@reach/router";
+import { Redirect } from "@reach/router";
 import { BASE_URL } from "../utils/api";
 import CustomAlert from "./CustomAlert";
 // eslint-disable-next-line import/no-unresolved
@@ -150,7 +150,7 @@ const Account = () => {
   const theme = useTheme();
   const identity = useIdentityContext();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up("sm"));
-  const [stateError, sendFormErrors] = useFormError();
+  const [stateError, sendFormErrors, cleanErrors] = useFormError();
   const toggleAlert = () => setOpenAlert(!openAlert);
   const token =
     identity &&
@@ -250,6 +250,7 @@ const Account = () => {
         value: state.saving,
       };
     }
+    cleanErrors();
     addParameter(parameter);
   };
 

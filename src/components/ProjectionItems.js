@@ -2,7 +2,6 @@ import {
   Button,
   Grid,
   IconButton,
-  LinearProgress,
   List,
   makeStyles,
   Typography,
@@ -21,6 +20,8 @@ import categories from "../utils/categories";
 import { currencyFormatter } from "../utils/format";
 // eslint-disable-next-line import/no-unresolved
 import { useIdentityContext } from "react-netlify-identity";
+import BeatifulAlert from "./BeatifulAlert";
+import LoadingOverlay from "./LoadingOverlay";
 
 const LOADING_PROJECTION_ITEMS = "LOADING_PROJECTION_ITEMS";
 const ERROR_PROJECTION_ITEMS = "ERROR_PROJECTION_ITEMS";
@@ -41,6 +42,11 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("lg")]: {
       padding: theme.spacing(2),
     },
+  },
+  titles: {
+    display: "flex",
+    justifyContent: "space-between",
+    margin: "20px 0",
   },
   button: {
     margin: theme.spacing(1),
@@ -131,6 +137,30 @@ const reducerForm = (state = initialFormState, action) => {
   }
 
   return state;
+};
+
+const useParameters = (username, token) => {
+  const [parameters, setParameters] = useState({});
+  const [error, setError] = useState(false);
+  const getParameters = () => {
+    fetch(`${BASE_URL}/get-parameter?username=${username}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        setParameters(response);
+      })
+      .catch((error) => setError(true));
+  };
+
+  useEffect(() => getParameters(), []);
+
+  return [parameters, error];
 };
 
 const useProjectionItems = (projectionId, token) => {
@@ -263,13 +293,18 @@ const ProjectionItems = ({ id }) => {
     identity.user &&
     identity.user.token &&
     identity.user.token.access_token;
+  const email = identity && identity.user && identity.user.email;
   const [state, loadProjectionItems] = useProjectionItems(id, token);
   const [
     stateAddProjectionItem,
     addProjectionItem,
     deleteProjectionItem,
   ] = useModifyProjectionItem(toggleAlert, loadProjectionItems, token);
+  const [parameters] = useParameters(email, token);
+  const [moneyWarning, setMoneyWarning] = useState(false);
+  const { income, debt, saving } = parameters;
   const goToProjections = () => navigate("/projections");
+  const toggleMoneyWarning = () => setMoneyWarning(!moneyWarning);
   const {
     projectionItems,
     error,
@@ -284,6 +319,24 @@ const ProjectionItems = ({ id }) => {
 
   const isLoggedIn = identity && identity.isLoggedIn;
 
+  const totalMessage =
+    totalMinValue !== totalMaxValue
+      ? `${currencyFormatter.format(
+          totalMinValue
+        )} - ${currencyFormatter.format(totalMaxValue)}`
+      : currencyFormatter.format(totalMinValue);
+  const valueRoof =
+    Number(income?.value) -
+    Number(saving?.value) -
+    Number(debt?.value) -
+    totalMaxValue;
+
+  useEffect(() => {
+    if (valueRoof <= 0) {
+      toggleMoneyWarning();
+    }
+  }, [valueRoof]);
+
   if (!isLoggedIn) {
     return <Redirect noThrow={true} to="/" />;
   }
@@ -291,71 +344,81 @@ const ProjectionItems = ({ id }) => {
   if (error) {
     return <Redirect noThrow={true} to="/error" />;
   }
-
-  const totalMessage =
-    totalMinValue !== totalMaxValue
-      ? `${currencyFormatter.format(
-          totalMinValue
-        )} - ${currencyFormatter.format(totalMaxValue)}`
-      : currencyFormatter.format(totalMinValue);
   return (
-    <Grid item xs={12} className={classes.list}>
-      <IconButton
-        edge="end"
-        aria-label="go-projections"
-        title="go-projections"
-        onClick={goToProjections}
-      >
-        <ArrowBackIcon />
-      </IconButton>
-      <Typography variant={isSmallScreen ? "h2" : "h3"}>
-        Proyección {name}
-      </Typography>
-      <Typography variant="h6">Total {totalMessage}</Typography>
-      <Button
-        size="large"
-        variant="contained"
-        color="primary"
-        onClick={toggleDialog}
-        className={classes.button}
-      >
-        Añadir Item
-      </Button>
-      <List className={classes.list}>
-        {loading && <LinearProgress color="secondary" />}
-        {projectionItems.length &&
-          projectionItems.map((projectionItem) => {
-            const { id } = projectionItem.ref["@ref"];
-            const { category, minValue, maxValue } = projectionItem;
-            const categoryElement = categories.find((c) => c.name === category);
-            const { icon, label } = categoryElement;
-            return (
-              <ProjectionItem
-                category={label}
-                minValue={minValue}
-                maxValue={maxValue}
-                icon={icon}
-                key={id}
-                id={id}
-                onDelete={deleteProjectionItem}
-              />
-            );
-          })}
-      </List>
-      <AddProjectionItemDialog
-        handleClose={toggleDialog}
-        open={open}
-        addProjectionItem={addProjectionItem}
-        projectionId={id}
-      />
-      <CustomAlert
-        open={openAlert}
-        handleClose={toggleAlert}
-        severity={stateAddProjectionItem.success ? "success" : "error"}
-      >
-        {stateAddProjectionItem.message}
-      </CustomAlert>
-    </Grid>
+    <>
+      <BeatifulAlert toggleOpen={toggleMoneyWarning} open={moneyWarning}>
+        Has alcanzado el limite planeado! Procura ajustar tu planeación
+      </BeatifulAlert>
+      <Grid item xs={12} className={classes.list}>
+        <IconButton
+          edge="end"
+          aria-label="go-projections"
+          title="go-projections"
+          onClick={goToProjections}
+        >
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant={isSmallScreen ? "h2" : "h3"}>
+          Proyección {name}
+        </Typography>
+        <Grid item xs={12} className={classes.titles}>
+          <Typography variant="h6">Total {totalMessage}</Typography>
+          {!Number.isNaN(valueRoof) && (
+            <Typography
+              variant="h6"
+              color={valueRoof > 0 ? "primary" : "secondary"}
+            >
+              {`${currencyFormatter.format(valueRoof)} Dinero disponible`}
+            </Typography>
+          )}
+        </Grid>
+        <Button
+          size="large"
+          variant="contained"
+          color="primary"
+          onClick={toggleDialog}
+          className={classes.button}
+        >
+          Añadir Item
+        </Button>
+        <List className={classes.list}>
+          {loading && <LoadingOverlay />}
+          {projectionItems.length &&
+            projectionItems.map((projectionItem) => {
+              const { id } = projectionItem.ref["@ref"];
+              const { category, minValue, maxValue } = projectionItem;
+              const categoryElement = categories.find(
+                (c) => c.name === category
+              );
+              const { icon, label } = categoryElement;
+              return (
+                <ProjectionItem
+                  category={label}
+                  minValue={minValue}
+                  maxValue={maxValue}
+                  icon={icon}
+                  key={id}
+                  id={id}
+                  onDelete={deleteProjectionItem}
+                />
+              );
+            })}
+        </List>
+        <AddProjectionItemDialog
+          handleClose={toggleDialog}
+          open={open}
+          addProjectionItem={addProjectionItem}
+          projectionId={id}
+        />
+        <CustomAlert
+          open={openAlert}
+          handleClose={toggleAlert}
+          severity={stateAddProjectionItem.success ? "success" : "error"}
+        >
+          {stateAddProjectionItem.message}
+        </CustomAlert>
+      </Grid>
+    </>
   );
 };
 

@@ -1,7 +1,6 @@
 import {
   Button,
   Grid,
-  LinearProgress,
   List,
   makeStyles,
   Typography,
@@ -17,6 +16,7 @@ import CustomAlert from "./CustomAlert";
 import Projection from "./Projection";
 // eslint-disable-next-line import/no-unresolved
 import { useIdentityContext } from "react-netlify-identity";
+import LoadingOverlay from "./LoadingOverlay";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -210,7 +210,7 @@ const Projections = () => {
         Añadir Proyección
       </Button>
       <List className={classes.list}>
-        {loading && <LinearProgress color="secondary" />}
+        {loading && <LoadingOverlay />}
         {projections.length &&
           projections.map((projection) => {
             const { id } = projection.ref["@ref"];
